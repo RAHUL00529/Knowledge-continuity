@@ -1,0 +1,85 @@
+[
+  {
+    "date": "2026-09-04",
+    "items": [
+      {
+        "sourceId": "slack-2026-09-04-priya-01",
+        "sourceType": "slack",
+        "project": "Payments Platform",
+        "author": "Priya Sharma",
+        "date": "2026-09-04",
+        "raw": "Tracked down why some EU customers were seeing prices in USD instead of their local currency — the geo-IP lookup service was timing out silently and we defaulted to USD on any error instead of the customer's account-level currency preference. Fixed the fallback to use account currency, not a hardcoded default.",
+        "signals": {
+          "hasResolutionMarker": true,
+          "reactions": ["✅"],
+          "ticketStatus": "closed"
+        }
+      },
+      {
+        "sourceId": "slack-2026-09-04-priya-02",
+        "sourceType": "slack",
+        "project": "Payments Platform",
+        "author": "Priya Sharma",
+        "date": "2026-09-04",
+        "raw": "ty!",
+        "signals": {
+          "hasResolutionMarker": false,
+          "reactions": [],
+          "ticketStatus": null
+        }
+      },
+      {
+        "sourceId": "slack-2026-09-04-priya-03",
+        "sourceType": "slack",
+        "project": "Payments Platform",
+        "author": "Priya Sharma",
+        "date": "2026-09-04",
+        "raw": "Following up on the refund escalation — spoke with the customer directly, Arjun Mehta, reachable at arjun.mehta@gmail.com or +91 98765 43210, and confirmed the double-charge was from the split-payment tax bug (PAY-915). Manually refunded the duplicate ₹1,240 charge and let him know it's resolved.",
+        "signals": {
+          "hasResolutionMarker": true,
+          "reactions": ["✅"],
+          "ticketStatus": "closed"
+        }
+      },
+      {
+        "sourceId": "jira-PAY-922",
+        "sourceType": "ticket",
+        "project": "Payments Platform",
+        "author": "Priya Sharma",
+        "date": "2026-09-04",
+        "raw": "Ticket PAY-922: Escalated by support lead Neha Kulkarni (neha.kulkarni@company.com) — a vendor payout was sent to a stale bank account on file because our account-update webhook from the banking partner wasn't being processed, just logged and ignored. Fixed by actually consuming the webhook and updating the payout record. Confirmed fix with Neha before closing.",
+        "signals": {
+          "hasResolutionMarker": true,
+          "reactions": ["✅"],
+          "ticketStatus": "closed"
+        }
+      },
+      {
+        "sourceId": "gh-pr-2440",
+        "sourceType": "github",
+        "project": "Payments Platform",
+        "author": "Priya Sharma",
+        "date": "2026-09-04",
+        "raw": "PR #2440: bumped a dependency patch version, no functional change",
+        "signals": {
+          "hasResolutionMarker": false,
+          "reactions": [],
+          "ticketStatus": "merged"
+        }
+      },
+      {
+        "sourceId": "jira-PAY-915",
+        "sourceType": "ticket",
+        "project": "Payments Platform",
+        "author": "Priya Sharma",
+        "date": "2026-09-04",
+        "raw": "Ticket PAY-915: Split-payment orders (part gift card, part credit card) were double-counting the gift card portion in the tax calculation because tax was computed on the pre-split total and then again on the credit-card sub-total. Fixed by computing tax once on the full order total before splitting. Resolved.",
+        "signals": {
+          "hasResolutionMarker": true,
+          "reactions": ["✅"],
+          "ticketStatus": "closed"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Priya Shah",
+    "role": "Senior Backend Engineer",
+    "project": "checkout-service",
+    "status": "offboarding",
+    "isDeparted": true,
+    "note": "Departing employee persona. Used more daily batches than most engineers, but her final ~2 weeks (short notice period) never got the end-of-day prompt — that gap is what the offboarding flow surfaces."
+  },
+  {
+    "name": "Raj Verma",
+    "role": "Software Engineer",
+    "project": "checkout-service",
+    "status": "active",
+    "isDeparted": false,
+    "note": "New hire persona. Hits the exact bug Priya solved. This is the retrieval demo's main character."
+  },
+  {
+    "name": "Tom Chen",
+    "role": "Backend Engineer",
+    "project": "checkout-service",
+    "status": "active",
+    "isDeparted": false,
+    "note": "Existing teammate with overlapping tags to Priya (redis, retry-logic). Proves the 'related experts' feature — Raj should see Tom suggested alongside Priya's stored knowledge."
+  },
+  {
+    "name": "Aisha Khan",
+    "role": "Senior Engineer",
+    "project": "auth-platform",
+    "status": "active",
+    "isDeparted": false,
+    "note": "Different project, but her stored entry shares a 'race-condition' tag with Priya's golden bug on purpose. Used to demo WHY project-scoping matters: without scoping she'd be a false-positive expert suggestion for a checkout bug."
+  },
+  {
+    "name": "Maria Lopez",
+    "role": "DevOps Engineer",
+    "project": "notifications-service",
+    "status": "active",
+    "isDeparted": false,
+    "note": "Third project, for completeness of the scoping dropdown and to show the system isn't a two-person toy dataset."
+  }
+]

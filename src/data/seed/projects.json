@@ -1,0 +1,5 @@
+[
+  { "id": "proj-payments", "name": "Payments Platform" },
+  { "id": "proj-search", "name": "Search & Discovery" },
+  { "id": "proj-mobile", "name": "Mobile App" }
+]

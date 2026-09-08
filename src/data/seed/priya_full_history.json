@@ -1,0 +1,450 @@
+[
+  {
+    "sourceId": "slack-2026-05-02-priya-01",
+    "sourceType": "slack",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-05-02",
+    "raw": "Finally tracked down the intermittent 502s on the checkout service. Root cause: our Redis connection pool (ioredis, default pool size) was exhausting under traffic spikes because we weren't releasing connections after failed transactions — they just sat in a half-open state until timeout. Fix: explicitly call conn.release() in the finally block of the payment retry handler, and bumped pool size from 10 to 25 as a buffer. 502 rate dropped to ~0 after deploy. Closing this out ✅",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": ["✅", "🙌"],
+      "ticketStatus": "closed"
+    },
+    "alreadyCaptured": true
+  },
+  {
+    "sourceId": "slack-2026-08-15-priya-10",
+    "sourceType": "slack",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-08-15",
+    "raw": "Debugged the invoice PDF generation crash reported by a customer, Fatima Rahman, contactable at fatima.rahman@outlook.com — turned out addresses with non-Latin characters (she has an accented surname on file) were breaking our PDF library's default font, which only supports ASCII. Switched to a Unicode-safe font (Noto Sans) for the invoice template. Verified with her sample invoice, no crash.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": ["✅"],
+      "ticketStatus": "closed"
+    },
+    "alreadyCaptured": false
+  },
+
+  {
+    "sourceId": "jira-PAY-118",
+    "sourceType": "ticket",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-05-06",
+    "raw": "Ticket PAY-118: Webhook retry storm from Stripe was hammering our /webhooks/stripe endpoint during their incident on the 4th. We had no idempotency check, so duplicate webhook deliveries were double-processing refunds. Added a idempotency_key table keyed on Stripe's event.id, return 200 immediately on duplicate. Verified against replayed test events. Status: Resolved.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": [],
+      "ticketStatus": "closed"
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "slack-2026-05-09-priya-02",
+    "sourceType": "slack",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-05-09",
+    "raw": "lgtm, merging",
+    "signals": {
+      "hasResolutionMarker": false,
+      "reactions": [],
+      "ticketStatus": null
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "gh-pr-2201",
+    "sourceType": "github",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-05-14",
+    "raw": "PR #2201: Fixed a race condition in the refund reconciliation job. Two cron instances could pick up the same pending refund row if the job overlapped by even a few seconds, causing double refunds in staging. Added a Postgres advisory lock around the batch claim step. Confirmed no double-refunds in 48hr soak test.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": ["✅"],
+      "ticketStatus": "merged"
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "slack-2026-05-20-priya-03",
+    "sourceType": "slack",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-05-20",
+    "raw": "on it",
+    "signals": {
+      "hasResolutionMarker": false,
+      "reactions": [],
+      "ticketStatus": null
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "jira-PAY-134",
+    "sourceType": "ticket",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-05-25",
+    "raw": "Ticket PAY-134: Currency rounding mismatch between our internal ledger and the payment processor for JPY transactions — JPY has 0 decimal places, but our conversion util was hardcoded to assume 2 decimals for all currencies. Off-by-cents errors accumulated in reconciliation. Fixed by pulling decimal precision from a currency-metadata table instead of assuming. Resolved.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": [],
+      "ticketStatus": "closed"
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "slack-2026-06-01-priya-04",
+    "sourceType": "slack",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-06-01",
+    "raw": "Standing up a new load balancer config today, will update once tested",
+    "signals": {
+      "hasResolutionMarker": false,
+      "reactions": [],
+      "ticketStatus": null
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "gh-pr-2244",
+    "sourceType": "github",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-06-05",
+    "raw": "PR #2244: Payment service was silently swallowing timeout errors from the fraud-check third-party API and treating them as 'approved' — a fail-open bug that let a handful of fraudulent transactions through during an outage last week. Changed to fail-closed with a manual review queue on timeout. Added alerting on fraud-check timeout rate.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": ["✅", "😅"],
+      "ticketStatus": "merged"
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "jira-PAY-141",
+    "sourceType": "ticket",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-06-10",
+    "raw": "Ticket PAY-141: Users on slow connections were double-submitting the checkout form because the submit button wasn't disabled after first click, causing duplicate charge attempts (caught by idempotency layer, but generated confusing support tickets). Disabled button on submit + added optimistic UI spinner. Resolved.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": [],
+      "ticketStatus": "closed"
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "slack-2026-06-14-priya-05",
+    "sourceType": "slack",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-06-14",
+    "raw": "thanks!",
+    "signals": {
+      "hasResolutionMarker": false,
+      "reactions": [],
+      "ticketStatus": null
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "gh-pr-2270",
+    "sourceType": "github",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-06-19",
+    "raw": "PR #2270: Fixed memory leak in the payment event listener — we were attaching a new EventEmitter listener on every incoming webhook without ever removing old ones, since the handler was re-registered per request instead of once at startup. Leaked ~40MB/hr under load. Moved listener registration to app boot.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": ["✅"],
+      "ticketStatus": "merged"
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "jira-PAY-150",
+    "sourceType": "ticket",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-06-24",
+    "raw": "Ticket PAY-150: Sandbox/test-mode API keys were being accepted in production config due to a missing environment check, which let a QA tester accidentally process a real $0.00-auth test card against a live customer. Added a startup assertion that throws if a sandbox key pattern is detected while NODE_ENV=production. Resolved.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": ["😬", "✅"],
+      "ticketStatus": "closed"
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "slack-2026-06-28-priya-06",
+    "sourceType": "slack",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-06-28",
+    "raw": "sounds good, will sync tomorrow",
+    "signals": {
+      "hasResolutionMarker": false,
+      "reactions": [],
+      "ticketStatus": null
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "gh-pr-2299",
+    "sourceType": "github",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-07-02",
+    "raw": "PR #2299: Batched refund exports to the finance team were timing out at ~5000 rows because we were building the entire CSV in memory before streaming. Switched to a streaming CSV writer (csv-stringify pipe) so it writes row-by-row instead of buffering. Export that used to time out now completes in ~8s for 50k rows.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": ["✅"],
+      "ticketStatus": "merged"
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "jira-PAY-162",
+    "sourceType": "ticket",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-07-08",
+    "raw": "Ticket PAY-162: Multi-currency conversion was using a cached exchange rate that refreshed only once per hour, causing noticeable pricing drift for customers during volatile FX periods. Reduced cache TTL to 5 minutes for high-volatility currency pairs specifically, kept 1hr for stable pairs, to balance API rate limits against accuracy. Resolved.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": [],
+      "ticketStatus": "closed"
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "slack-2026-07-11-priya-07",
+    "sourceType": "slack",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-07-11",
+    "raw": "np, np",
+    "signals": {
+      "hasResolutionMarker": false,
+      "reactions": [],
+      "ticketStatus": null
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "gh-pr-2320",
+    "sourceType": "github",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-07-15",
+    "raw": "PR #2320: Chargebacks webhook handler was crashing on a null card.brand field for Apple Pay transactions specifically — Stripe sends a slightly different payload shape for wallet-based payments that our schema validation didn't account for. Made card.brand optional in the validator and added a fallback label 'digital_wallet'.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": ["✅"],
+      "ticketStatus": "merged"
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "jira-PAY-889",
+    "sourceType": "ticket",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-07-20",
+    "raw": "Ticket PAY-889: Under heavy Black-Friday-style load testing, saw the ioredis pool exhaust again — this time from the fraud-check service holding connections open during slow third-party calls rather than releasing them back to the pool while waiting. Applied the same fix pattern as PAY earlier: wrap third-party calls in a timeout + always release in finally, regardless of outcome. Also added a pool-usage Grafana alert at 80% so we catch this before it 502s in prod next time.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": ["✅", "🔥"],
+      "ticketStatus": "closed"
+    },
+    "alreadyCaptured": false
+  },
+
+  {
+    "sourceId": "slack-2026-07-24-priya-08",
+    "sourceType": "slack",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-07-24",
+    "raw": "np",
+    "signals": {
+      "hasResolutionMarker": false,
+      "reactions": [],
+      "ticketStatus": null
+    },
+    "alreadyCaptured": false
+  },
+
+  {
+    "sourceId": "gh-pr-2355",
+    "sourceType": "github",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-07-28",
+    "raw": "PR #2355: Found that our payout scheduler was using server-local time instead of UTC to decide 'end of business day,' which meant payouts triggered an hour early/late depending on daylight saving transitions. Switched all scheduling comparisons to UTC with explicit timezone conversion only at the display layer.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": ["✅"],
+      "ticketStatus": "merged"
+    },
+    "alreadyCaptured": false
+  },
+
+  {
+    "sourceId": "jira-PAY-901",
+    "sourceType": "ticket",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-08-02",
+    "raw": "Ticket PAY-901: A partner integration's API started rate-limiting us at 429 far more aggressively than their docs stated, breaking our sync job. Turned out they'd silently tightened limits during a migration on their end — no changelog notice. Added exponential backoff with jitter and a circuit breaker so we degrade gracefully instead of hammering them. Still waiting on their support to confirm new official limits.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": [],
+      "ticketStatus": "closed"
+    },
+    "alreadyCaptured": false
+  },
+
+  {
+    "sourceId": "slack-2026-08-06-priya-09",
+    "sourceType": "slack",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-08-06",
+    "raw": "Debugged why refund amounts were occasionally off by exactly the transaction fee — turned out someone (me, three months ago) had refund logic subtracting the processor fee before crediting the customer, which is wrong for full refunds where the fee should also be returned. Only applies to 'full_refund' type, partial refunds were correct. Fixed the branch logic, backfilled 12 affected refunds manually.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": ["✅"],
+      "ticketStatus": "closed"
+    },
+    "alreadyCaptured": false
+  },
+
+  {
+    "sourceId": "gh-pr-2388",
+    "sourceType": "github",
+    "project": "Payments Platform",
+    "author": "Priya Sharma",
+    "date": "2026-08-11",
+    "raw": "PR #2388: minor lint fixes, no functional change",
+    "signals": {
+      "hasResolutionMarker": false,
+      "reactions": [],
+      "ticketStatus": "merged"
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "slack-2026-05-11-priya-s01",
+    "sourceType": "slack",
+    "project": "Search & Discovery",
+    "author": "Priya Sharma",
+    "date": "2026-05-11",
+    "raw": "Helped Search team track down why typo-tolerant search was returning zero results for queries under 3 characters — the fuzzy-match library's edit-distance threshold defaulted to requiring at least 3 chars to compute distance meaningfully. Added an exact-match fallback path for queries shorter than that.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": ["✅"],
+      "ticketStatus": "closed"
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "jira-SRCH-44",
+    "sourceType": "ticket",
+    "project": "Search & Discovery",
+    "author": "Priya Sharma",
+    "date": "2026-05-30",
+    "raw": "Ticket SRCH-44: Search relevance ranking was over-weighting exact title matches to the point that popular-but-less-relevant items always outranked precise matches. Introduced a BM25-style term frequency component alongside the existing exact-match boost, tuned weights against a manually labeled test query set. Resolved.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": [],
+      "ticketStatus": "closed"
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "slack-2026-06-15-priya-s02",
+    "sourceType": "slack",
+    "project": "Search & Discovery",
+    "author": "Priya Sharma",
+    "date": "2026-06-15",
+    "raw": "sure, sending now",
+    "signals": {
+      "hasResolutionMarker": false,
+      "reactions": [],
+      "ticketStatus": null
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "gh-pr-2410",
+    "sourceType": "github",
+    "project": "Search & Discovery",
+    "author": "Priya Sharma",
+    "date": "2026-06-29",
+    "raw": "PR #2410: Search index rebuild job was OOMing on the full catalog because it loaded every document into memory before batching to Elasticsearch. Switched to a cursor-based streaming batch of 500 docs at a time. Rebuild that used to crash now completes reliably.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": ["✅"],
+      "ticketStatus": "merged"
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "jira-SRCH-61",
+    "sourceType": "ticket",
+    "project": "Search & Discovery",
+    "author": "Priya Sharma",
+    "date": "2026-07-18",
+    "raw": "Ticket SRCH-61: Autocomplete suggestions were showing discontinued products because the suggestion index wasn't filtering on the same 'active' flag the main search index used — they're built by two separate jobs that had drifted out of sync on filter logic. Consolidated both to share one filter-building function. Resolved.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": [],
+      "ticketStatus": "closed"
+    },
+    "alreadyCaptured": true
+  },
+
+  {
+    "sourceId": "slack-2026-08-01-priya-s03",
+    "sourceType": "slack",
+    "project": "Search & Discovery",
+    "author": "Priya Sharma",
+    "date": "2026-08-01",
+    "raw": "Investigated slow search response times (~2.5s p95) during peak traffic — root cause was that we were re-running the full synonym-expansion step on every query instead of caching expanded synonym sets per term, since synonyms rarely change. Added a 24hr in-memory cache for expanded terms. p95 dropped to ~300ms.",
+    "signals": {
+      "hasResolutionMarker": true,
+      "reactions": ["✅", "🚀"],
+      "ticketStatus": "closed"
+    },
+    "alreadyCaptured": false
+  }
+]
